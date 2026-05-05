@@ -631,7 +631,7 @@ export default function App() {
           <div className="absolute top-0 left-0 w-64 h-64 bg-brand-orange/10 blur-[120px] -ml-32 -mt-32"></div>
           <div className="relative z-10">
             <h2 className="text-4xl md:text-6xl font-normal text-white tracking-tighter uppercase mb-6 leading-none">Ready to Build Yours? <br/><span className="text-brand-orange">Start Now.</span></h2>
-            <p className="text-gray-400 text-xl font-medium leading-relaxed mb-10 max-w-md">
+            <p className="text-gray-400 text-[24px] font-normal leading-[36px] mb-10 max-w-md">
               You don’t need to hire. <br/>
               You don’t need to raise. <br/>
               You need leverage. <br/><br/>
@@ -683,7 +683,7 @@ export default function App() {
       </section>
 
       {/* Newsletter / CTA Footer Section */}
-      <section id="newsletter" className="pt-[160px] pb-[160px] pl-[61px] pr-12 border-t border-white/5 bg-gradient-to-b from-brand-dark to-black overflow-hidden relative">
+      <section id="newsletter" className="hidden pt-[160px] pb-[160px] pl-[61px] pr-12 border-t border-white/5 bg-gradient-to-b from-brand-dark to-black overflow-hidden relative">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-[140px] pointer-events-none"></div>
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <motion.div
