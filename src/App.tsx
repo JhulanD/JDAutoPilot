@@ -443,21 +443,30 @@ export default function App() {
             </motion.div>
           </div>
           
-          <motion.div variants={itemVariants} className="relative group">
-            <div className="absolute -inset-4 bg-brand-orange/20 rounded-2xl blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 vault-glow">
-              <img 
+          <motion.div 
+            variants={itemVariants} 
+            className="relative group w-full lg:h-full lg:flex lg:items-center lg:justify-end"
+          >
+            <div className="absolute -inset-6 bg-brand-orange/15 rounded-3xl blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+            <motion.div 
+              className="relative w-full aspect-square lg:h-full lg:max-h-[600px] rounded-2xl overflow-hidden border border-white/10 vault-glow"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <motion.img 
                 src={heroImage.url} 
-                className="w-full h-full object-cover transform scale-110 group-hover:scale-105 transition-transform duration-1000" 
+                className="w-full h-full object-cover" 
+                whileHover={{ scale: 1.15 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} 
                 alt="JDAutoPilot Lead Magnet"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               <div className="absolute bottom-8 left-8">
                 <div className="w-12 h-1 bg-brand-orange mb-3"></div>
                 <div className="text-white font-black text-2xl uppercase tracking-tighter">{heroImage.label}</div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.section>
