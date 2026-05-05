@@ -145,17 +145,31 @@ export default function ROICalculator() {
       });
       
       // Trigger emails via backend
-      fetch('/api/roi-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, metrics, results, pdf: pdfDataUri })
-      }).catch(err => console.error("ROI report email failed:", err));
+      try {
+        const roiRes = await fetch('/api/roi-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, metrics, results, pdf: pdfDataUri })
+        });
+        const roiData = await roiRes.json();
+        if (!roiRes.ok) throw new Error(roiData.error || "ROI report failed");
+        console.log("ROI report email success:", roiData);
+      } catch (err) {
+        console.error("ROI report email failed:", err);
+      }
 
-      fetch('/api/send-vault-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      }).catch(err => console.error("Vault access email failed:", err));
+      try {
+        const vaultRes = await fetch('/api/send-vault-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const vaultData = await vaultRes.json();
+        if (!vaultRes.ok) throw new Error(vaultData.error || "Vault access failed");
+        console.log("Vault access email success:", vaultData);
+      } catch (err) {
+        console.error("Vault access email failed:", err);
+      }
 
       setIsSubmitted(true);
     } catch (error) {

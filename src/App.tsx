@@ -43,11 +43,18 @@ const Modal = ({ isOpen, onClose, onSuccess }: { isOpen: boolean, onClose: () =>
       });
 
       // Send confirmation email via backend
-      fetch('/api/send-vault-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, name: formData.name })
-      }).catch(err => console.error("Email trigger failed:", err));
+      try {
+        const response = await fetch('/api/send-vault-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, name: formData.name })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Vault access failed");
+        console.log("Vault access email success:", data);
+      } catch (err) {
+        console.error("Email trigger failed:", err);
+      }
     } catch (error) {
       console.error("Firestore error:", error);
       // We don't want to break the success state for the user if tracking fails
@@ -286,11 +293,18 @@ export default function App() {
       });
 
       // Send confirmation email via backend
-      fetch('/api/send-vault-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail })
-      }).catch(err => console.error("Email trigger failed:", err));
+      try {
+        const res = await fetch('/api/send-vault-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: newsletterEmail })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Newsletter email failed");
+        console.log("Newsletter email success:", data);
+      } catch (err) {
+        console.error("Email trigger failed:", err);
+      }
 
       setIsSubscribed(true);
       setNewsletterEmail('');
