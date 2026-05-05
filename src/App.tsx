@@ -630,7 +630,7 @@ export default function App() {
         >
           <div className="absolute top-0 left-0 w-64 h-64 bg-brand-orange/10 blur-[120px] -ml-32 -mt-32"></div>
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase mb-6 leading-none">Ready to Build Yours? <br/>Start Now.</h2>
+            <h2 className="text-4xl md:text-6xl font-normal text-white tracking-tighter uppercase mb-6 leading-none">Ready to Build Yours? <br/><span className="text-brand-orange">Start Now.</span></h2>
             <p className="text-gray-400 text-xl font-medium leading-relaxed mb-10 max-w-md">
               You don’t need to hire. <br/>
               You don’t need to raise. <br/>
@@ -683,7 +683,7 @@ export default function App() {
       </section>
 
       {/* Newsletter / CTA Footer Section */}
-      <section id="newsletter" className="py-40 px-12 border-t border-white/5 bg-gradient-to-b from-brand-dark to-black overflow-hidden relative">
+      <section id="newsletter" className="pt-[160px] pb-[160px] pl-[61px] pr-12 border-t border-white/5 bg-gradient-to-b from-brand-dark to-black overflow-hidden relative">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-[140px] pointer-events-none"></div>
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <motion.div
@@ -692,8 +692,8 @@ export default function App() {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <h2 className="text-5xl md:text-7xl mb-6 tracking-tighter font-black text-white uppercase">JOIN THE <span className="text-brand-orange underline decoration-brand-orange/40">ELITE.</span></h2>
-            <p className="text-[#9CA3AF] text-xl font-light leading-relaxed max-w-2xl mx-auto">
+            <h2 className="text-5xl md:text-[80px] mb-6 tracking-tighter font-normal text-white uppercase">JOIN THE <span className="text-brand-orange underline decoration-brand-orange/40">ELITE.</span></h2>
+            <p className="text-[#9CA3AF] text-[24px] font-light leading-relaxed max-w-2xl mx-auto">
               Every Monday, we drop one high-impact automation tactic that saved our clients 20+ hours a week. No fluff. Just logic.
             </p>
           </motion.div>
