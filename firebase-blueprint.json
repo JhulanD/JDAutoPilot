@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "Lead": {
+      "title": "Lead",
+      "description": "Information for potential clients and newsletter subscribers",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the potential client"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Terminal email address"
+        },
+        "source": {
+          "type": "string",
+          "description": "Where the lead came from (e.g., newsletter, audit, vault_modal)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the lead was captured"
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional context for the lead (like ROI data)"
+        }
+      },
+      "required": ["email", "source", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Storage for all captured leads across the application"
+    }
+  }
+}

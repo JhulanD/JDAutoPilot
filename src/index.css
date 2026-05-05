@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Funnel Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Funnel Sans", sans-serif;
+  
+  --color-brand-orange: #E6513A;
+  --color-brand-dark: #0F1115;
+  --color-brand-blue: #1E3A8A;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base styles with transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ensure global dark background */
+body {
+  background-color: #0F1115;
+  color: #F3F4F6;
+}
+
+/* Light Theme Overrides */
+:root.light body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+}
+
+:root.light .bg-brand-dark,
+:root.light .bg-brand-dark\/50,
+:root.light .bg-brand-dark\/90,
+:root.light .bg-\[\#15171d\],
+:root.light .bg-\[\#0a0a0a\] {
+  background-color: #FFFFFF !important;
+}
+
+:root.light .bg-black\/40,
+:root.light .bg-black\/90,
+:root.light .bg-black\/80,
+:root.light .bg-black\/80.backdrop-blur-sm,
+:root.light .bg-black\/90.backdrop-blur-md {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+:root.light .text-white,
+:root.light .text-\[\#F3F4F6\],
+:root.light h1, :root.light h2, :root.light h3, :root.light h4,
+:root.light .bg-brand-dark .text-white {
+  color: #0F172A;
+}
+
+:root.light .vault-glow .text-white,
+:root.light .force-white {
+  color: #FFFFFF !important;
+}
+
+:root.light p,
+:root.light .text-gray-300,
+:root.light .text-gray-400,
+:root.light .text-gray-500,
+:root.light .text-\[\#9CA3AF\] {
+  color: #334155; /* Slate 700 - much darker for visibility */
+}
+
+:root.light .border-white\/5,
+:root.light .border-white\/10,
+:root.light .border-white\/20,
+:root.light .border-gray-800\/20 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+:root.light .bg-white\/5,
+:root.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+:root.light nav {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.08);
+  backdrop-blur: 16px;
+}
+
+:root.light nav .text-white:not(.text-2xl) {
+  color: #0F172A;
+}
+
+:root.light nav .text-\[\#9CA3AF\] {
+  color: #64748B;
+}
+
+:root.light nav a:not(.bg-brand-orange) {
+  color: #475569;
+}
+
+:root.light nav a:hover:not(.bg-brand-orange) {
+  color: #0F172A;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+:root.light .bg-brand-orange\/10 {
+  background-color: rgba(230, 81, 58, 0.12);
+}
+
+:root.light input[type="range"] {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+:root.light input[type="range"]::-webkit-slider-runnable-track {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+:root.light input[type="text"],
+:root.light input[type="email"],
+:root.light input[type="email"].bg-transparent {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+:root.light input[type="email"].bg-transparent::placeholder {
+  color: #64748B;
+}
+
+:root.light .hero-mask {
+  background-image: radial-gradient(circle at 70% 30%, rgba(230, 81, 58, 0.08) 0%, transparent 70%);
+}
+
+:root.light .vault-glow .from-black {
+  --tw-gradient-from: #000000 !important;
+}
+
+:root.light .vault-glow .text-white {
+  color: #FFFFFF !important;
+}
+
+:root.light .vault-glow {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+:root.light #audit .bg-white\/5 {
+  background-color: #FFFFFF;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+}
+
+:root.light #audit .bg-gradient-to-br.from-\[\#1e222a\].via-\[\#15171d\].to-black {
+  background-image: linear-gradient(to bottom right, #FFFFFF, #F8FAFC);
+}
+
+:root.light #audit .bg-gradient-to-br.from-\[\#1e222a\].via-\[\#15171d\].to-black,
+:root.light #audit .bg-gradient-to-br.from-\[\#1e222a\].via-\[\#15171d\].to-black .text-white {
+  color: #0F172A !important;
+}
+
+:root.light #audit .bg-gradient-to-br.from-\[\#1e222a\].via-\[\#15171d\].to-black p,
+:root.light #audit .bg-gradient-to-br.from-\[\#1e222a\].via-\[\#15171d\].to-black h4 {
+  color: #0F172A !important;
+}
+
+:root.light #roi-calculator {
+  background-color: #F1F5F9 !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+:root.light #templates.bg-brand-dark\/50 {
+  background-color: #FFFFFF !important;
+}
+
+:root.light #templates .bg-\[\#15171d\] {
+  background-color: #F8FAFC !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+:root.light #audit {
+  background-color: #F8FAFC !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+:root.light footer {
+  background-color: #F1F5F9;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+:root.light .selection\:bg-brand-orange\/30 {
+  --tw-selection-bg: rgba(230, 81, 58, 0.15);
+}
+
+:root.light .bg-gradient-to-b.from-brand-dark.to-black {
+  background-image: linear-gradient(to bottom, #F8FAFC, #F1F5F9);
+}
+
+:root.light .bg-gradient-to-br.from-brand-orange\/20.to-transparent {
+  background-image: linear-gradient(to bottom right, rgba(230, 81, 58, 0.05), transparent);
+}
+
+/* Brand Orange Button Consistency */
+.bg-brand-orange {
+  color: #FFFFFF !important;
+}
+
+.cta-button .arrow-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cta-button:hover .arrow-icon {
+  transform: rotate(-45deg);
+}
+
+.bg-brand-orange:hover {
+  background-color: #EE614D !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 10px 25px -5px rgba(230, 81, 58, 0.4);
+}
+
+:root.light .bg-brand-orange {
+  color: #FFFFFF !important;
+}
+
+:root.light .bg-brand-orange:hover {
+  background-color: #cf432f !important;
+  color: #FFFFFF !important;
+}
+
+:root.light .bg-brand-orange .text-white,
+:root.light .bg-brand-orange h1,
+:root.light .bg-brand-orange h2,
+:root.light .bg-brand-orange h3,
+:root.light h4.bg-brand-orange,
+:root.light .bg-brand-orange span,
+:root.light .bg-brand-orange div,
+:root.light .bg-brand-orange p {
+  color: #FFFFFF !important;
+}
+
+:root.light .bg-white .text-black,
+:root.light .bg-white h1,
+:root.light .bg-white h2,
+:root.light .bg-white h3,
+:root.light .bg-white h4,
+:root.light .bg-white span,
+:root.light .bg-white div,
+:root.light .bg-white p {
+  color: #000000 !important;
+}
+
+:root.light .bg-black\/80,
+:root.light .bg-black\/95 {
+  background-color: rgba(15, 17, 21, 0.8) !important;
+}
+
+:root.light .bg-black\/80 + .bg-brand-dark,
+:root.light .bg-black\/95 + .bg-brand-dark {
+  background-color: #FFFFFF !important;
+}
+
+@utility vault-glow {
+  box-shadow: 0 0 50px -10px rgba(30, 58, 138, 0.4);
+}
+
+@utility hero-mask {
+  background-image: radial-gradient(circle at 70% 30%, rgba(30, 58, 138, 0.15) 0%, transparent 70%);
+}
+
+@utility orange-shadow {
+  box-shadow: 0 10px 30px -10px #E6513A;
+}

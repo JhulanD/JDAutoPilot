@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function incoming() { return request.resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    
+    // Lead Validation
+    function isValidLead(data) {
+      return data.keys().hasAll(['email', 'source', 'createdAt']) && 
+             data.keys().size() <= 6 &&
+             data.email is string && data.email.size() <= 256 &&
+             data.source is string && data.source.size() <= 100 &&
+             data.createdAt == request.time &&
+             (!('name' in data) || (data.name is string && data.name.size() <= 100)) &&
+             (!('details' in data) || (data.details is map));
+    }
+
+    match /leads/{leadId} {
+      // Allow public creation for leads (newsletter/audit/vault)
+      allow create: if isValidId(leadId) && isValidLead(incoming());
+      
+      // Prevent unauthorized access from client
+      allow read, update, delete: if false;
+    }
+  }
+}
