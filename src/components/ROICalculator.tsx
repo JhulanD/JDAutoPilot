@@ -27,6 +27,7 @@ export default function ROICalculator() {
   });
 
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -66,7 +67,7 @@ export default function ROICalculator() {
     doc.text("JDAUTOPILOT ROI REPORT", 20, 25);
     
     doc.setFontSize(10);
-    doc.text("PREPARED FOR: " + (email || "A VALUED AGENCY OWNER"), 20, 35);
+    doc.text("PREPARED FOR: " + (name ? `${name} (${email})` : (email || "A VALUED AGENCY OWNER")), 20, 35);
 
     // Summary Section
     doc.setTextColor(0, 0, 0);
@@ -135,6 +136,7 @@ export default function ROICalculator() {
       const pdfDataUri = generatePDF(false);
 
       await addDoc(collection(db, path), {
+        name,
         email,
         source: 'roi_calculator',
         details: {
@@ -326,24 +328,37 @@ export default function ROICalculator() {
                   <p className="text-gray-400 text-sm mb-8 leading-relaxed">
                     We'll generate a 5-page PDF deep dive showing your exact automation roadmap and cost-saving breakdown.
                   </p>
-                  <form onSubmit={handleFullReport} className="flex flex-col sm:flex-row gap-2">
-                    <div className="relative flex-1">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-                      <input 
-                        required
-                        type="email" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Your Email" 
-                        className="w-full bg-black/40 border border-white/10 text-white p-4 pl-12 rounded-sm focus:outline-none focus:border-brand-orange transition-colors"
-                      />
+                  <form onSubmit={handleFullReport} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="relative flex-1">
+                        <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                        <input 
+                          required
+                          type="text" 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Your Name" 
+                          className="w-full bg-black/40 border border-white/10 text-white p-4 pl-12 rounded-sm focus:outline-none focus:border-brand-orange transition-colors"
+                        />
+                      </div>
+                      <div className="relative flex-1">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                        <input 
+                          required
+                          type="email" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Your Email" 
+                          className="w-full bg-black/40 border border-white/10 text-white p-4 pl-12 rounded-sm focus:outline-none focus:border-brand-orange transition-colors"
+                        />
+                      </div>
                     </div>
                     <button 
                       type="submit"
                       disabled={isSubmitting}
-                      className="cta-button bg-brand-orange text-white font-black px-8 py-4 rounded-sm flex items-center justify-center gap-3 transition-all transform disabled:opacity-50 group text-sm"
+                      className="cta-button w-full bg-brand-orange text-white font-black px-8 py-5 rounded-sm flex items-center justify-center gap-3 transition-all transform disabled:opacity-50 group text-sm uppercase"
                     >
-                      {isSubmitting ? <Loader2 className="animate-spin w-5 h-5" /> : <>GET REPORT <ArrowRight className="arrow-icon w-5 h-5" /></>}
+                      {isSubmitting ? <Loader2 className="animate-spin w-5 h-5" /> : <>GENERATE & SEND FULL REPORT <ArrowRight className="arrow-icon w-5 h-5" /></>}
                     </button>
                   </form>
                 </>

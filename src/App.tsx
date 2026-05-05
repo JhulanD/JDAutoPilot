@@ -32,15 +32,15 @@ const Modal = ({ isOpen, onClose, onSuccess }: { isOpen: boolean, onClose: () =>
     setIsSubmitting(true);
     const path = 'leads';
     
-    // Optimistic success for better UX speed
-    onSuccess();
-    
     try {
       await addDoc(collection(db, path), {
         ...formData,
         source: 'vault_modal',
         createdAt: serverTimestamp()
       });
+
+      // Optimistic email send, but we definitely have the lead in Firestore now
+      onSuccess();
 
       // Send confirmation email via backend
       try {
@@ -221,6 +221,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'templates' | 'newsletter'>('templates');
 
   const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterName, setNewsletterName] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [heroVariant, setHeroVariant] = useState<number>(0);
 
@@ -287,6 +288,7 @@ export default function App() {
     const path = 'leads';
     try {
       await addDoc(collection(db, path), {
+        name: newsletterName,
         email: newsletterEmail,
         source: 'newsletter_footer',
         createdAt: serverTimestamp()
@@ -308,6 +310,7 @@ export default function App() {
 
       setIsSubscribed(true);
       setNewsletterEmail('');
+      setNewsletterName('');
       setTimeout(() => setIsSubscribed(false), 5000);
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, path);
@@ -702,25 +705,38 @@ export default function App() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto p-1 bg-white/5 backdrop-blur-md rounded-md border border-white/10 focus-within:border-brand-orange/50 transition-all focus-within:ring-4 focus-within:ring-brand-orange/10"
+            className="flex flex-col gap-3 max-w-lg mx-auto"
           >
-            <div className="relative flex-1">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-              <input 
-                required
-                type="email" 
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Enter Your Email" 
-                className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-white focus:outline-none transition-colors placeholder:text-gray-600"
-              />
+            <div className="flex flex-col sm:flex-row gap-3 p-1 bg-white/5 backdrop-blur-md rounded-md border border-white/10 focus-within:border-brand-orange/50 transition-all focus-within:ring-4 focus-within:ring-brand-orange/10">
+              <div className="relative flex-1">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                <input 
+                  required
+                  type="text" 
+                  value={newsletterName}
+                  onChange={(e) => setNewsletterName(e.target.value)}
+                  placeholder="Your Name" 
+                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-white focus:outline-none transition-colors placeholder:text-gray-600"
+                />
+              </div>
+              <div className="relative flex-1">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                <input 
+                  required
+                  type="email" 
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="Your Email" 
+                  className="w-full bg-transparent py-4 pl-12 pr-4 text-sm text-white focus:outline-none transition-colors placeholder:text-gray-600 border-t sm:border-t-0 sm:border-l border-white/10"
+                />
+              </div>
             </div>
             <button 
               type="submit"
               disabled={isSubscribed}
-              className={`cta-button font-black px-10 py-4 rounded-sm transition-all duration-300 transform hover:shadow-2xl flex items-center gap-3 whitespace-nowrap text-sm ${isSubscribed ? 'bg-green-500 text-white' : 'bg-brand-orange text-white'}`}
+              className={`cta-button font-black w-full py-5 rounded-md transition-all duration-300 transform hover:shadow-2xl flex items-center justify-center gap-3 whitespace-nowrap text-sm uppercase ${isSubscribed ? 'bg-green-500 text-white' : 'bg-brand-orange text-white'}`}
             >
-              {isSubscribed ? 'INTEL SECURED' : <span>GET INTEL</span>}
+              {isSubscribed ? 'INTEL SECURED' : <span>DEPLOY AUTOMATION INTEL</span>}
               {!isSubscribed && <ArrowRight className="arrow-icon w-5 h-5" />}
             </button>
           </motion.form>
