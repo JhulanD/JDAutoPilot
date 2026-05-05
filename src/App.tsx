@@ -489,7 +489,7 @@ export default function App() {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    className="grid md:grid-cols-2 gap-8 items-center bg-black border border-white/5 rounded-xl p-4 md:p-12 text-left shadow-2xl"
+                    className="grid md:grid-cols-2 gap-8 items-center bg-[#15171d] border border-white/10 rounded-xl p-4 md:p-12 text-left"
                   >
                     <div>
                       <motion.h3 variants={slideUpVariants} className="text-3xl font-black uppercase text-white mb-6">Template Library</motion.h3>
@@ -549,7 +549,7 @@ export default function App() {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    className="grid md:grid-cols-2 gap-8 items-center bg-black border border-white/5 rounded-xl p-4 md:p-12 text-left text-white shadow-2xl"
+                    className="grid md:grid-cols-2 gap-8 items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4 md:p-12 text-left text-white"
                   >
                     <div>
                       <motion.h3 variants={slideUpVariants} className="text-3xl font-black uppercase mb-6">JD AI Newsletter</motion.h3>
@@ -628,7 +628,7 @@ export default function App() {
           
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[320px] aspect-[1/1.4] bg-white rounded-lg shadow-[20px_20px_80px_rgba(0,0,0,0.15)] overflow-hidden transform rotate-6 border-[20px] border-white">
-              <div className="h-full w-full bg-gradient-to-br from-brand-dark via-brand-dark to-black p-8 flex flex-col justify-between text-white border-l-[10px] border-brand-orange/40 relative">
+              <div className="h-full w-full bg-gradient-to-br from-[#1e222a] via-[#15171d] to-black p-8 flex flex-col justify-between text-white border-l-[10px] border-brand-orange/40 relative">
                 <div className="flex justify-between items-start">
                   <div className="text-[10px] font-black uppercase tracking-widest text-brand-orange">JDAutoPilot</div>
                   <div className="px-2 py-1 bg-white text-black font-black text-[10px] rounded-sm uppercase flex items-center gap-1 shadow-md">

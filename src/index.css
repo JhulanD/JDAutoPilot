@@ -6,7 +6,7 @@
   --font-display: "Funnel Sans", sans-serif;
   
   --color-brand-orange: #E6513A;
-  --color-brand-dark: #000000;
+  --color-brand-dark: #0F1115;
   --color-brand-blue: #1E3A8A;
 }
 
@@ -21,7 +21,7 @@ html {
 
 /* Ensure global dark background */
 body {
-  background-color: #000000;
+  background-color: #0F1115;
   color: #F3F4F6;
 }
 
