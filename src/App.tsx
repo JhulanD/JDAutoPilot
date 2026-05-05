@@ -218,10 +218,10 @@ export default function App() {
   const [heroVariant, setHeroVariant] = useState<number>(0);
 
   const HERO_VARIANTS = [
-    <>Your Shortcut to <br/><span className="text-brand-orange">AI Automation.</span></>,
+    <>Blueprint for <br/><span className="text-brand-orange">Agentic Workflows.</span></>,
     <>Scale Your Agency <br/><span className="text-brand-orange">With AI Systems.</span></>,
     <>Automate Your Growth <br/><span className="text-brand-orange">While You Sleep.</span></>,
-    <>The Blueprint for <br/><span className="text-brand-orange">Agentic Workflow.</span></>
+    <>Precision Systems for <br/><span className="text-brand-orange">Elite Agencies.</span></>
   ];
 
   useEffect(() => {
@@ -382,7 +382,7 @@ export default function App() {
       >
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           <div>
-            <motion.h1 variants={itemVariants} className="text-5xl md:text-[84px] font-normal leading-[0.85] tracking-tighter mb-8 uppercase text-white drop-shadow-2xl">
+            <motion.h1 variants={itemVariants} className="text-5xl md:text-[84px] font-normal leading-[0.9] tracking-tighter mb-8 uppercase text-white drop-shadow-2xl">
               {HERO_VARIANTS[heroVariant]}
             </motion.h1>
             <motion.div variants={itemVariants} className="mb-12 space-y-4 max-w-lg">
