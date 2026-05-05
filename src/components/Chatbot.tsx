@@ -1,9 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { GoogleGenAI } from "@google/genai";
 import { MessageSquare, X, Send, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const GREETINGS = [
   "Welcome to JDAutoPilot. How can I help you automate your growth today?",
@@ -50,21 +47,25 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      // Create fresh instance for every call
-      const localAi = new GoogleGenAI({ apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY });
-      
-      const response = await localAi.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: [...messages, { role: "user", text: userMessage }].map(m => ({
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          prompt: userMessage,
+          history: messages.map(m => ({
             role: m.role,
             parts: [{ text: m.text }]
-        })),
-        config: {
-          systemInstruction: "You are a charismatic and high-energy AI Automation Assistant for JDAutoPilot. Your mission is to show users how AI can explode their agency's productivity and revenue. \n\nGuidelines:\n1. Be varied in your approach—sometimes focus on time-saving, other times on scalability or technical edge.\n2. Always mention the 'Agency AI Growth Vault' as the ultimate treasure trove for templates.\n3. If someone says 'hello' or 'hi', reply with a punchy, unique greeting and ask a specific question about their agency.\n4. Keep responses concise but impactful. \n5. Use tech-forward language but keep it accessible.",
-        }
+          }))
+        }),
       });
 
-      const modelText = response.text || "I'm sorry, I couldn't process that.";
+      const data = await res.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      const modelText = data.text || "I'm sorry, I couldn't process that.";
       setMessages(prev => [...prev, { role: "model", text: modelText }]);
     } catch (error) {
       console.error("Chat error:", error);
