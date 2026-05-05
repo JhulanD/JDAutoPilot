@@ -13,10 +13,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Missing required data" });
     }
 
+    console.log(`[ROIReportAPI] Sending PDF report to: ${email}`);
     const base64Content = pdf.split(",")[1] || pdf;
     
     const info = await sendEmail({
-      to: email,
+      to: email.trim(),
       subject: "Your Personalized Agency ROI Report - JDAutoPilot",
       html: `
         <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1F2937; line-height: 1.6; background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden;">

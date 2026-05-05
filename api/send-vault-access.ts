@@ -13,8 +13,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Email is required" });
     }
 
+    console.log(`[VaultAccessAPI] Request for: ${email}`);
+
     const info = await sendEmail({
-      to: email,
+      to: email.trim(),
       subject: "ACCESS GRANTED: Your Agency AI Vault",
       html: `
         <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1F2937; line-height: 1.6; background-color: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden;">

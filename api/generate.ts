@@ -7,20 +7,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { prompt, history } = req.body;
+    const payload = req.body || {};
+    const userPrompt = payload.prompt as string;
+    const historyArray = (payload.history || []) as any[];
     
-    if (!prompt) {
+    if (!userPrompt) {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "Gemini API key not configured" });
+      console.error("CRITICAL: GEMINI_API_KEY is not set in process.env");
+      return res.status(500).json({ error: "Gemini API key not configured on server." });
     }
 
-    const ai = new GoogleGenAI({ apiKey });
-    const contents = history ? [...history, { role: "user", parts: [{ text: prompt }] }] : [{ role: "user", parts: [{ text: prompt }] }];
+    const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
     
+    // Process and validate history
+    const contents = [...historyArray, { role: "user", parts: [{ text: userPrompt }] }];
+    
+    console.log(`[ChatbotAPI] Sending prompt to Gemini: ${userPrompt.substring(0, 50)}...`);
+
     const response = await ai.models.generateContent({ 
       model: "gemini-3-flash-preview",
       contents,

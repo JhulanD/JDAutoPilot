@@ -13,8 +13,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    console.log(`[SendEmailAPI] Generic email request to: ${to}`);
     const info = await sendEmail({
-      to,
+      to: typeof to === 'string' ? to.trim() : to,
       subject,
       html: html || text,
       attachments: attachments?.map((a: any) => ({
