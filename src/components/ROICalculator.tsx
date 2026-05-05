@@ -13,7 +13,7 @@ import {
   Loader2
 } from "lucide-react";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
@@ -55,7 +55,7 @@ export default function ROICalculator() {
 
   const generatePDF = (isDownload = false) => {
     const doc = new jsPDF() as any;
-    const brandColor = [255, 77, 0]; // Brand Orange #ff4d00
+    const brandColor: [number, number, number] = [255, 77, 0]; // Brand Orange #ff4d00
 
     // Header
     doc.setFillColor(21, 23, 29); // Brand Dark
@@ -74,7 +74,7 @@ export default function ROICalculator() {
     doc.setFontSize(16);
     doc.text("PHASE 1: AUTOMATION POTENTIAL", 20, 60);
     
-    doc.autoTable({
+    autoTable(doc, {
       startY: 65,
       head: [["METRIC", "CURRENT VALUE"]],
       body: [
@@ -92,7 +92,7 @@ export default function ROICalculator() {
     doc.setFontSize(16);
     doc.text("PHASE 2: PROJECTED IMPACT", 20, nextY);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: nextY + 5,
       head: [["PROJECTED OUTCOME", "IMPACT"]],
       body: [
