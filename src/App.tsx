@@ -226,10 +226,10 @@ export default function App() {
   const [heroVariant, setHeroVariant] = useState<number>(0);
 
   const HERO_VARIANTS = [
-    <>Blueprint for <br/><span className="text-brand-orange">Agentic Workflows.</span></>,
-    <>Scale Your Agency <br/><span className="text-brand-orange">With AI Systems.</span></>,
-    <>Automate Your Growth <br/><span className="text-brand-orange">While You Sleep.</span></>,
-    <>Precision Systems for <br/><span className="text-brand-orange">Elite Agencies.</span></>
+    <>Blueprint For <br/><span className="text-brand-orange tracking-[-0.06em]">Agentic Workflows.</span></>,
+    <>Scale Your Agency <br/><span className="text-brand-orange tracking-[-0.06em]">With AI Systems.</span></>,
+    <>Automate Your Growth <br/><span className="text-brand-orange tracking-[-0.06em]">While You Sleep.</span></>,
+    <>Precision Systems For <br/><span className="text-brand-orange tracking-[-0.06em]">Elite Agencies.</span></>
   ];
 
   useEffect(() => {
@@ -399,7 +399,7 @@ export default function App() {
       >
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           <div>
-            <motion.h1 variants={itemVariants} className="text-5xl md:text-[84px] font-normal leading-[0.9] tracking-tighter mb-8 uppercase text-white drop-shadow-2xl">
+            <motion.h1 variants={itemVariants} className="text-5xl md:text-[84px] font-normal leading-[0.9] tracking-tight mb-8 uppercase text-white drop-shadow-2xl">
               {HERO_VARIANTS[heroVariant]}
             </motion.h1>
             <motion.div variants={itemVariants} className="mb-12 space-y-4 max-w-lg">
@@ -549,22 +549,18 @@ export default function App() {
                     </div>
                     <div className="bg-brand-dark/50 border border-white/5 rounded-lg p-8 aspect-video flex items-center justify-center relative overflow-hidden">
                        <Layout className="w-32 h-32 text-brand-orange/10 absolute -rotate-12" />
-                       <div className="relative z-10 grid grid-cols-2 gap-4 w-full">
-                          <div className="h-24 bg-white/5 rounded border border-white/10 overflow-hidden relative group/chamber">
-                            <img src="https://images.unsplash.com/photo-1551288049-bbbda536339a?w=400&q=80" className="absolute inset-0 w-full h-full object-cover opacity-70 filter grayscale group-hover/chamber:grayscale-0 group-hover/chamber:opacity-100 transition-all duration-700" alt="Bot Logic Workflow" referrerPolicy="no-referrer" />
-                            <div className="absolute inset-0 bg-black/40 group-hover/chamber:bg-transparent transition-colors duration-500"></div>
+                       <div className="relative z-10 grid grid-cols-2 gap-4 w-full h-full">
+                          <div className="h-full bg-white/5 rounded border border-white/10 overflow-hidden relative shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80" className="absolute inset-0 w-full h-full object-cover" alt="Agentic Logic Node" referrerPolicy="no-referrer" />
                           </div>
-                          <div className="h-24 bg-white/5 rounded border border-white/10 overflow-hidden relative group/chamber">
-                            <img src="https://images.unsplash.com/photo-1586282391129-59a998fd034c?w=400&q=80" className="absolute inset-0 w-full h-full object-cover opacity-70 filter grayscale group-hover/chamber:grayscale-0 group-hover/chamber:opacity-100 transition-all duration-700" alt="Process Flow Diagram" referrerPolicy="no-referrer" />
-                            <div className="absolute inset-0 bg-black/40 group-hover/chamber:bg-transparent transition-colors duration-500"></div>
+                          <div className="h-full bg-white/5 rounded border border-white/10 overflow-hidden relative shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80" className="absolute inset-0 w-full h-full object-cover" alt="Lead Intelligence UI" referrerPolicy="no-referrer" />
                           </div>
-                          <div className="h-24 bg-white/10 rounded border border-brand-orange/30 overflow-hidden relative group/chamber">
-                            <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400&q=80" className="absolute inset-0 w-full h-full object-cover opacity-80 filter grayscale group-hover/chamber:grayscale-0 group-hover/chamber:opacity-100 transition-all duration-700" alt="Nodal Automation" referrerPolicy="no-referrer" />
-                            <div className="absolute inset-0 bg-brand-orange/5 group-hover/chamber:bg-transparent transition-colors duration-500"></div>
+                          <div className="h-full bg-white/10 rounded border border-brand-orange/30 overflow-hidden relative shadow-[0_0_30px_rgba(255,77,0,0.15)]">
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80" className="absolute inset-0 w-full h-full object-cover" alt="Core Automation Logic" referrerPolicy="no-referrer" />
                           </div>
-                          <div className="h-24 bg-white/5 rounded border border-white/10 overflow-hidden relative group/chamber">
-                            <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=400&q=80" className="absolute inset-0 w-full h-full object-cover opacity-70 filter grayscale group-hover/chamber:grayscale-0 group-hover/chamber:opacity-100 transition-all duration-700" alt="Technical Integration" referrerPolicy="no-referrer" />
-                            <div className="absolute inset-0 bg-black/40 group-hover/chamber:bg-transparent transition-colors duration-500"></div>
+                          <div className="h-full bg-white/5 rounded border border-white/10 overflow-hidden relative shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80" className="absolute inset-0 w-full h-full object-cover" alt="Data Pipeline" referrerPolicy="no-referrer" />
                           </div>
                        </div>
                     </div>

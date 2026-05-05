@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { GoogleGenAI } from "@google/genai";
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
@@ -30,6 +31,7 @@ export default function ROICalculator() {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null);
 
   const results = useMemo(() => {
     const totalManualHours = metrics.teamSize * metrics.manualHoursPerPerson;
@@ -53,74 +55,197 @@ export default function ROICalculator() {
     };
   }, [metrics]);
 
-  const generatePDF = (isDownload = false) => {
+  const generatePDF = (isDownload = false, customAiAnalysis?: any) => {
     const doc = new jsPDF() as any;
     const brandColor: [number, number, number] = [255, 77, 0]; // Brand Orange #ff4d00
+    const analysis = customAiAnalysis || aiAnalysis;
 
+    // --- PAGE 1: EXECUTIVE SUMMARY ---
     // Header
     doc.setFillColor(21, 23, 29); // Brand Dark
-    doc.rect(0, 0, 210, 40, "F");
+    doc.rect(0, 0, 210, 45, "F");
     
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
     doc.setFont("helvetica", "bold");
-    doc.text("JDAUTOPILOT ROI REPORT", 20, 25);
+    doc.setFontSize(26);
+    doc.text("JDAutoPilot - ROI Report", 20, 25);
     
     doc.setFontSize(10);
-    doc.text("PREPARED FOR: " + (name ? `${name} (${email})` : (email || "A VALUED AGENCY OWNER")), 20, 35);
+    doc.setFont("helvetica", "normal");
+    const preparedBy = `Confidential | Prepared For: ${name ? name : "Valued Agency Owner"} (${email})`;
+    doc.text(preparedBy, 20, 38);
 
-    // Summary Section
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(16);
-    doc.text("PHASE 1: AUTOMATION POTENTIAL", 20, 60);
-    
+    // Context / Intro
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("PHASE 1: CURRENT SYSTEM EFFICIENCY AUDIT", 20, 60);
+
     autoTable(doc, {
       startY: 65,
-      head: [["METRIC", "CURRENT VALUE"]],
+      head: [["SYSTEM METRIC", "CURRENT STATE"]],
       body: [
-        ["TEAM SIZE", metrics.teamSize],
-        ["AVG HOURLY RATE", `$${metrics.hourlyRate}/HR`],
-        ["MANUAL HOURS / PERSON", `${metrics.manualHoursPerPerson}HRS`],
-        ["TOTAL CLIENTS", metrics.clientCount]
+        ["AGENCY TEAM SIZE", `${metrics.teamSize} PROFESSIONALS`],
+        ["AVERAGE BILLABLE RATE", `$${metrics.hourlyRate}/HR`],
+        ["ADMIN/MANUAL OVERHEAD", `${metrics.manualHoursPerPerson} HOURS/PERSON/MONTH`],
+        ["ACTIVE CLIENT LOAD", `${metrics.clientCount} CLIENTS`]
       ],
-      headStyles: { fillColor: brandColor },
+      headStyles: { fillColor: brandColor, fontSize: 10, cellPadding: 5 },
+      bodyStyles: { fontSize: 10, cellPadding: 5 },
       theme: "striped"
     });
 
-    // Results Section
-    const nextY = (doc as any).lastAutoTable.finalY + 20;
-    doc.setFontSize(16);
-    doc.text("PHASE 2: PROJECTED IMPACT", 20, nextY);
+    const impactY = (doc as any).lastAutoTable.finalY + 15;
+    doc.setFontSize(12);
+    doc.text("PHASE 2: PROJECTED AUTOMATION LEVERAGE", 20, impactY);
 
     autoTable(doc, {
-      startY: nextY + 5,
-      head: [["PROJECTED OUTCOME", "IMPACT"]],
+      startY: impactY + 5,
+      head: [["OUTPUT VARIABLE", "PROJECTED GROWTH"]],
       body: [
-        ["MONTHLY HOURS RECOVERY", `${results.hoursSaved} HOURS`],
+        ["MONTHLY HOURS RECOVERED", `${results.hoursSaved} HOURS`],
         ["MONTHLY COST REDUCTION", `$${results.monthlySavings.toLocaleString()}`],
         ["ANNUAL PROFIT INCREASE", `$${results.annualSavings.toLocaleString()}`],
-        ["ROI PROJECTION", `${results.roi}%`]
+        ["NET SYSTEM ROI", `${results.roi}%`]
       ],
-      headStyles: { fillColor: brandColor },
+      headStyles: { fillColor: [40, 40, 40], fontSize: 10, cellPadding: 5 },
+      bodyStyles: { fontSize: 10, cellPadding: 5, fontStyle: 'bold' },
       theme: "grid"
     });
 
-    // Call to Action
-    const ctaY = (doc as any).lastAutoTable.finalY + 30;
-    doc.setFillColor(255, 77, 0);
-    doc.rect(20, ctaY, 170, 40, "F");
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.text("READY TO EXECUTE THIS DEPLOYMENT?", 30, ctaY + 15);
+    // Strategy Note (Page 1 bottom)
+    const noteY = (doc as any).lastAutoTable.finalY + 15;
     doc.setFontSize(10);
-    doc.text("Book a custom systems audit to lock in these calculations.", 30, ctaY + 25);
+    doc.setFont("helvetica", "italic");
+    const strategyNote = "The metrics above indicate a system-wide vulnerability to manual friction. Without structural automation, your agency scales by increasing overhead, effectively capping your profit margins.";
+    const splitNote = doc.splitTextToSize(strategyNote, 170);
+    doc.text(splitNote, 20, noteY);
+
+    // --- PAGE 2: THE VULNERABILITY (PAIN & AGITATION) ---
+    doc.addPage();
+    doc.setFillColor(21, 23, 29);
+    doc.rect(0, 0, 210, 20, "F");
+    
+    doc.setTextColor(255, 77, 0);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("VULNERABILITY ASSESSMENT & RISK ANALYSIS", 20, 13);
+
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(12);
+    doc.text("SECTION A: CORE FRICTION POINTS", 20, 40);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const painText = analysis?.pain || `Your agency is currently suffering from massive profit leakage, with ${metrics.teamSize} team members losing ${metrics.manualHoursPerPerson} hours each per month to manual, non-billable labor. This equates to an annual drain of $${results.annualSavings.toLocaleString()} in potential revenue.`;
+    
+    const renderParagraph = (text: string, startY: number) => {
+      const sentences = text.split('. ').filter(s => s.trim().length > 0);
+      let currentY = startY;
+      sentences.forEach((sentence) => {
+        const cleanSentence = sentence.trim().endsWith('.') ? sentence.trim() : sentence.trim() + '.';
+        const lines = doc.splitTextToSize(cleanSentence, 170);
+        
+        if (cleanSentence.includes('$')) {
+          doc.setFont("helvetica", "bold");
+        } else {
+          doc.setFont("helvetica", "normal");
+        }
+        
+        doc.text(lines, 20, currentY);
+        currentY += (lines.length * 5) + 6;
+      });
+      return currentY;
+    };
+
+    const nextSectionY = renderParagraph(painText, 48);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    const agitationTitleY = Math.max(nextSectionY + 10, 110);
+    doc.text("SECTION B: THE COST OF INACTION", 20, agitationTitleY);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const agitateText = analysis?.agitation || "Delaying the deployment of automated infrastructure is costing you valuable hours and profit daily. While competitors automate delivery, you are paying high-level talent to perform low-level administrative tasks.";
+    const agitateEndY = renderParagraph(agitateText, agitationTitleY + 8);
+    
+    // Visual divider
+    doc.setDrawColor(255, 77, 0);
+    doc.setLineWidth(0.5);
+    const dividerY = Math.max(agitateEndY + 10, 185);
+    doc.line(20, dividerY, 190, dividerY);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("ANNUAL OPPORTUNITY COST:", 20, dividerY + 10);
+    doc.setFontSize(22);
+    doc.setTextColor(255, 77, 0);
+    doc.text(`$${results.annualSavings.toLocaleString()}`, 20, dividerY + 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(40, 40, 40);
+    doc.text(`EQUATING TO approx. $${(results.annualSavings / 365).toFixed(2)} / DAY IN LOST LEVERAGE`, 20, dividerY + 28);
+
+    // --- PAGE 3: THE PROTOCOL (SOLUTION & ROADMAP) ---
+    doc.addPage();
+    doc.setFillColor(21, 23, 29);
+    doc.rect(0, 0, 210, 20, "F");
+    
+    doc.setTextColor(255, 77, 0);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("DEPLOYMENT PROTOCOL: AUTOMATION ROADMAP", 20, 13);
+
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(12);
+    doc.text("STRATEGIC SOLUTION & SYSTEM ARCHITECTURE", 20, 40);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const solutionText = analysis?.solution || "We propose a multi-layered automation stack designed to remove the bottleneck of manual client reporting and project management.";
+    renderParagraph(solutionText, 48);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("IMMEDIATE DEPLOYMENT STEPS", 20, 140);
+
+    autoTable(doc, {
+      startY: 145,
+      head: [["ID", "ACTION ITEM", "PRIORITY"]],
+      body: [
+        ["01", "ELIMINATE MANUAL DATA EXTRACTION", "CRITICAL"],
+        ["02", "DEPLOY AUTO-CLIENT REPORTING V1", "HIGH"],
+        ["03", "CENTRALIZE SYSTEM OPERATING LOGIC", "HIGH"],
+        ["04", "SCALABLE WORKFLOW REPLICATION", "MEDIUM"]
+      ],
+      headStyles: { fillColor: brandColor, fontSize: 10 },
+      theme: "striped"
+    });
+
+    // Final CTA Box
+    const finalY = (doc as any).lastAutoTable.finalY + 20;
+    doc.setFillColor(255, 77, 0);
+    doc.rect(20, finalY, 170, 45, "F");
     
     doc.setTextColor(255, 255, 255);
-    doc.textWithLink("BOOK AUDIT NOW ->", 30, ctaY + 35, { url: "https://cal.com/jdautopilot/15min" });
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("AUTHORIZE FULL SYSTEM AUDIT", 30, finalY + 15);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Lock in these profit increases with a detailed technical deep dive.", 30, finalY + 25);
+    doc.textWithLink("BOOK A PERSONALIZED GROWTH AUDIT ->", 30, finalY + 38, { url: "https://cal.com/jdautopilot/15min" });
+
+    // Footer on last page
+    doc.setFillColor(21, 23, 29);
+    doc.rect(0, 277, 210, 20, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text("JDAutoPilot - Scale with Logic. Not Headcount.", 105, 288, { align: "center" });
 
     if (isDownload) {
-      doc.save(`ROI-Report-${email || "preview"}.pdf`);
+      doc.save(`JDAUTOPILOT-ROIREPORT-${email || "PREVIEW"}.pdf`);
     }
 
     return doc.output("datauristring");
@@ -130,47 +255,79 @@ export default function ROICalculator() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // In a real app we might store the PDF or just the lead data
     const path = 'leads';
     try {
-      const pdfDataUri = generatePDF(false);
+      // Step 1: Generate AI Intelligence (Gemini)
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+      const prompt = `
+        Act as a top-tier Agency Automation Consultant (JDAutoPilot). 
+        Analyze these agency metrics:
+        Team Size: ${metrics.teamSize}
+        Hourly Rate: $${metrics.hourlyRate}
+        Manual Hours/Person: ${metrics.manualHoursPerPerson}
+        Client Count: ${metrics.clientCount}
+        Projected Savings: $${results.annualSavings}/year
+        
+        Using the PAS (Pain, Agitate, Solution) framework, write a 3-part strategic analysis for a professional ROI report.
+        
+        Part 1 (Currently Losing): Focus on the burnout and profit leakage of $${results.annualSavings.toLocaleString()} annual profit drain. Explain how manual labor is a hidden tax on their growth.
+        Part 2 (The Escalation): Explain exactly why growing without automation is a dangerous trap. Talk about how every new client currently makes the agency MORE fragile.
+        Part 3 (The Protocol): Describe a sophisticated automation solution where systems handle the admin so the team can focus on strategy.
+        
+        CRITICAL: Each part should consist of 3-4 clear, impactful sentences. Each sentence should stand alone as a powerful statement. Mention the specific annual savings of $${results.annualSavings.toLocaleString()} in the analysis.
+        
+        Return ONLY a JSON object:
+        {
+          "pain": "...",
+          "agitation": "...",
+          "solution": "..."
+        }
+      `;
 
+      let reportAnalysis = {
+        pain: "Critical system friction detected. Manual scaling is capping profit margins.",
+        agitation: "Opportunity cost is growing daily. Your team is spending high-value time on repetitive admin tasks.",
+        solution: "Immediate deployment of automated data bridges and client reporting protocols is required."
+      };
+
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: prompt,
+          config: { responseMimeType: "application/json" }
+        });
+        const text = response.text;
+        reportAnalysis = JSON.parse(text);
+        setAiAnalysis(reportAnalysis);
+      } catch (aiErr) {
+        console.error("Gemini AI Report gen failed, using fallback:", aiErr);
+      }
+
+      // Step 2: Build PDF with IA
+      const pdfDataUri = generatePDF(false, reportAnalysis);
+
+      // Step 3: Store Lead
       await addDoc(collection(db, path), {
         name,
         email,
         source: 'roi_calculator',
         details: {
           metrics,
-          results
+          results,
+          aiAnalysis: reportAnalysis
         },
         createdAt: serverTimestamp()
       });
       
-      // Trigger emails via backend
+      // Step 4: Dispatch via backend
       try {
-        const roiRes = await fetch('/api/roi-report', {
+        await fetch('/api/roi-report', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, metrics, results, pdf: pdfDataUri })
         });
-        const roiData = await roiRes.json();
-        if (!roiRes.ok) throw new Error(roiData.error || "ROI report failed");
-        console.log("ROI report email success:", roiData);
       } catch (err) {
-        console.error("ROI report email failed:", err);
-      }
-
-      try {
-        const vaultRes = await fetch('/api/send-vault-access', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const vaultData = await vaultRes.json();
-        if (!vaultRes.ok) throw new Error(vaultData.error || "Vault access failed");
-        console.log("Vault access email success:", vaultData);
-      } catch (err) {
-        console.error("Vault access email failed:", err);
+        console.error("ROI report email dispatch failed:", err);
       }
 
       setIsSubmitted(true);
