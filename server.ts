@@ -117,15 +117,39 @@ async function startServer() {
           to: email,
           subject: "Your Personalized Agency ROI Report - JDAutoPilot",
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; color: #111;">
-              <h1 style="color: #ff4d00;">Your ROI Analysis is Complete.</h1>
-              <p>Hello,</p>
-              <p>Attached is your personalized automation report. Based on your metrics, you could be saving <strong>${results.hoursSaved} hours per month</strong>.</p>
-              <p><strong>Impact:</strong> $${results.annualSavings.toLocaleString()} in annual profit optimization.</p>
-              <hr style="border: 1px solid #eee; margin: 30px 0;" />
-              <p>Ready to deploy these systems?</p>
-              <a href="https://cal.com/jdautopilot/15min" style="background: #ff4d00; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; display: inline-block;">BOOK CUSTOM AUDIT</a>
-              <p style="font-size: 12px; color: #666; margin-top: 40px;">&copy; 2026 JDAutoPilot. All Systems Go.</p>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background-color: #ffffff;">
+              <div style="background-color: #E6513A; padding: 30px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">ROI Analysis Complete</h1>
+              </div>
+              <div style="padding: 40px;">
+                <p style="font-size: 18px; margin-top: 0;">Hey there,</p>
+                <p>I've just finished crunching the numbers for your agency, and the results are eye-opening. Based on the metrics you shared, your current manual overhead is costing you significantly more than it should.</p>
+                
+                <div style="background-color: #fff8f6; border-left: 4px solid #E6513A; padding: 20px; margin: 25px 0; border-radius: 4px;">
+                  <p style="margin: 0; font-size: 16px;">
+                    🎯 <strong>Potential Savings:</strong> ${results.hoursSaved} hours/month<br>
+                    💰 <strong>Annual Profit Recovery:</strong> $${results.annualSavings.toLocaleString()}
+                  </p>
+                </div>
+
+                <p>I've attached the full breakdown in a PDF for you. It covers exactly where the "leaks" are in your current operations and how AI-driven logic can plug them immediately.</p>
+                
+                <p><strong>This isn't just about saving time; it's about scaling your talent.</strong> When your team isn't bogged down by data entry or manual follow-ups, your output (and your margins) will skyrocket.</p>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                  <a href="https://cal.com/jdautopilot/15min" style="background-color: #E6513A; color: #ffffff; padding: 16px 32px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px rgba(230, 81, 58, 0.2);">
+                    Claim Your Custom Growth Audit
+                  </a>
+                  <p style="font-size: 14px; color: #777; margin-top: 15px;">(15 minutes could save you 15 hours a week)</p>
+                </div>
+
+                <p>Looking forward to seeing your agency hit that next gear.</p>
+                <p style="margin-bottom: 0;">Best,</p>
+                <p style="font-weight: bold; color: #E6513A; margin-top: 5px;">JD<br><span style="font-size: 12px; font-weight: normal; color: #999;">Founder, JDAutoPilot</span></p>
+              </div>
+              <div style="background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee;">
+                <p style="margin: 0;">&copy; 2026 JDAutoPilot. Sent with ⚡ via AI Automation.</p>
+              </div>
             </div>
           `,
           attachments: [
@@ -146,15 +170,19 @@ async function startServer() {
         });
       }
 
-      // Also save as a lead
-      const leadsFile = path.join(__dirname, 'leads.json');
-      let leads = [];
+      // Also save as a lead - wrapped in try/catch to prevent server crashes on read-only filesystems (like Vercel)
       try {
-        const data = await fs.readFile(leadsFile, 'utf-8');
-        leads = JSON.parse(data);
-      } catch (e) {}
-      leads.push({ email, type: 'roi_report', metrics, results, timestamp: new Date().toISOString() });
-      await fs.writeFile(leadsFile, JSON.stringify(leads, null, 2));
+        const leadsFile = path.join(__dirname, 'leads.json');
+        let leads = [];
+        try {
+          const data = await fs.readFile(leadsFile, 'utf-8');
+          leads = JSON.parse(data);
+        } catch (e) {}
+        leads.push({ email, type: 'roi_report', metrics, results, timestamp: new Date().toISOString() });
+        await fs.writeFile(leadsFile, JSON.stringify(leads, null, 2));
+      } catch (saveError) {
+        console.warn("Could not save lead to local file (Normal on Vercel):", saveError);
+      }
 
       res.status(200).json({ success: true });
     } catch (error) {
@@ -180,18 +208,22 @@ async function startServer() {
 
       // For now, we'll append to a local JSON file as a lightweight database
       // In a production environment, you would use Firebase, Supabase, or a CRM API here
-      const leadsFile = path.join(__dirname, 'leads.json');
-      let leads = [];
-      
       try {
-        const data = await fs.readFile(leadsFile, 'utf-8');
-        leads = JSON.parse(data);
-      } catch (e) {
-        // File doesn't exist yet
-      }
+        const leadsFile = path.join(__dirname, 'leads.json');
+        let leads = [];
+        
+        try {
+          const data = await fs.readFile(leadsFile, 'utf-8');
+          leads = JSON.parse(data);
+        } catch (e) {
+          // File doesn't exist yet
+        }
 
-      leads.push(lead);
-      await fs.writeFile(leadsFile, JSON.stringify(leads, null, 2));
+        leads.push(lead);
+        await fs.writeFile(leadsFile, JSON.stringify(leads, null, 2));
+      } catch (saveError) {
+        console.warn("Could not save lead locally (Normal on Vercel):", saveError);
+      }
 
       console.log(`New lead captured: ${email} via ${source}`);
       res.status(200).json({ success: true });
@@ -219,23 +251,42 @@ async function startServer() {
           to: email,
           subject: "ACCESS GRANTED: Your Agency AI Vault",
           html: `
-            <div style="background-color: #0F1115; color: #FFFFFF; font-family: sans-serif; padding: 40px; text-align: center;">
-              <div style="max-width: 600px; margin: 0 auto; background-color: #15171d; border: 1px solid #E6513A; padding: 40px; border-radius: 8px;">
-                <h1 style="color: #E6513A; text-transform: uppercase; letter-spacing: 2px;">Vault Unlocked</h1>
-                <p style="font-size: 18px; color: #9CA3AF;">Hello ${name || 'Agent'}, the automation blueprints are ready for deployment.</p>
-                <div style="margin: 30px 0; padding: 20px; background: rgba(230, 81, 58, 0.1); border-left: 4px solid #E6513A; text-align: left;">
-                  <h3 style="color: #FFFFFF; margin-top: 0;">Exclusive Assets:</h3>
-                  <ul style="list-style: none; padding: 0; margin: 0; color: #F3F4F6;">
-                    <li style="margin-bottom: 15px;">🔥 <strong>1 - Lead Qualifier</strong></li>
-                    <li style="margin-bottom: 15px;">🚀 <strong>2 - Telegram Bot Powered Booking</strong></li>
-                    <li>🔗 <strong>3 - Webform Automation</strong></li>
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background-color: #ffffff;">
+              <div style="background-color: #E6513A; padding: 30px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">Vault Unlocked</h1>
+              </div>
+              <div style="padding: 40px;">
+                <p style="font-size: 18px; margin-top: 0;">Welcome to the inner circle, ${name || 'Lead'}!</p>
+                <p>You've just taken the first step toward reclaiming your time and scaling your agency with pure logic. The automation blueprints you requested are ready and waiting for you.</p>
+                
+                <p>These are the exact same systems we use to power high-intensity operations, designed for speed and reliability. No fluff—just functional scaling logic.</p>
+
+                <div style="margin: 30px 0; padding: 25px; background-color: #fff8f6; border-left: 4px solid #E6513A; border-radius: 4px;">
+                  <h3 style="color: #E6513A; margin-top: 0; font-size: 18px;">Your Ready-to-Deploy Assets:</h3>
+                  <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li style="margin-bottom: 12px; font-size: 15px;">🔥 <strong>01: Lead Qualifier</strong> – Instant automated intake screening.</li>
+                    <li style="margin-bottom: 12px; font-size: 15px;">🚀 <strong>02: Telegram Booking Bot</strong> – High-speed lead capture.</li>
+                    <li style="font-size: 15px;">🔗 <strong>03: Webform Blueprint</strong> – Seamless integration for your stack.</li>
                   </ul>
                 </div>
-                <a href="https://www.notion.so/JDAutoPilot-3496964a0266807d8cb6f61290e02095?source=copy_link" 
-                   style="display: inline-block; background-color: #E6513A; color: #FFFFFF; font-weight: bold; text-decoration: none; padding: 15px 30px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px;">
-                   ENTER THE VAULT
-                </a>
-                <p style="margin-top: 30px; font-size: 12px; color: #4B5563;">&copy; 2026 JDAutoPilot. All systems go.</p>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                  <a href="https://www.notion.so/JDAutoPilot-3496964a0266807d8cb6f61290e02095?source=copy_link" 
+                     style="background-color: #E6513A; color: #ffffff; padding: 18px 36px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 18px; display: inline-block; box-shadow: 0 4px 6px rgba(230, 81, 58, 0.2);">
+                     ENTER THE VAULT
+                  </a>
+                  <p style="font-size: 13px; color: #999; margin-top: 15px;">Note: You may need a Notion account to duplicate these templates.</p>
+                </div>
+
+                <p>If you have any questions while setting these up, or if you want us to build something custom for your specific workflow, just hit reply or book a quick strategy session below.</p>
+                
+                <p style="text-align: center;"><a href="https://cal.com/jdautopilot/15min" style="color: #E6513A; font-weight: bold; text-decoration: underline;">Book a 15-Min Strategy Session</a></p>
+
+                <p style="margin-top: 40px; margin-bottom: 0;">See you on the inside,</p>
+                <p style="font-weight: bold; color: #E6513A; margin-top: 5px;">JD<br><span style="font-size: 12px; font-weight: normal; color: #999;">Founder, JDAutoPilot</span></p>
+              </div>
+              <div style="background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee;">
+                <p style="margin: 0;">&copy; 2026 JDAutoPilot. Sent with ⚡ via AI Automation.</p>
               </div>
             </div>
           `
