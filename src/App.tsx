@@ -489,7 +489,7 @@ export default function App() {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    className="grid md:grid-cols-2 gap-8 items-center bg-brand-dark border border-white/10 rounded-xl p-4 md:p-12 text-left"
+                    className="grid md:grid-cols-2 gap-8 items-center bg-black border border-white/5 rounded-xl p-4 md:p-12 text-left shadow-2xl"
                   >
                     <div>
                       <motion.h3 variants={slideUpVariants} className="text-3xl font-black uppercase text-white mb-6">Template Library</motion.h3>
@@ -549,7 +549,7 @@ export default function App() {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    className="grid md:grid-cols-2 gap-8 items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4 md:p-12 text-left text-white"
+                    className="grid md:grid-cols-2 gap-8 items-center bg-black border border-white/5 rounded-xl p-4 md:p-12 text-left text-white shadow-2xl"
                   >
                     <div>
                       <motion.h3 variants={slideUpVariants} className="text-3xl font-black uppercase mb-6">JD AI Newsletter</motion.h3>
