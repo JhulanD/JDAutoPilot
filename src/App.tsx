@@ -241,10 +241,24 @@ export default function App() {
 
   const handleAdminLogin = async () => {
     const provider = new GoogleAuthProvider();
+    // Hint: In Vercel, make sure to add your domain to Firebase Console > Auth > Settings > Authorized Domains
     try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
+      const result = await signInWithPopup(auth, provider);
+      if (result.user.email !== ADMIN_EMAIL) {
+        alert(`Logged in as ${result.user.email}. Access denied. Please sign out and use ${ADMIN_EMAIL}`);
+      }
+    } catch (error: any) {
       console.error("Login failed:", error);
+      alert(`System Error: ${error.message}. If you are on Vercel, ensure this domain is added to 'Authorized Domains' in Firebase console.`);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      setIsAdminLeadsOpen(false);
+    } catch (error) {
+      console.error("Sign out failed:", error);
     }
   };
 
@@ -772,20 +786,30 @@ export default function App() {
             <a href="mailto:jhulandey.ai@gmail.com" className="hover:text-brand-orange transition-colors">Contact</a>
             
             {/* Admin Intelligence Trigger */}
-            {user?.email === ADMIN_EMAIL ? (
-              <button 
-                onClick={() => setIsAdminLeadsOpen(true)}
-                className="text-brand-orange hover:text-white transition-colors bg-brand-orange/10 px-2 py-0.5 rounded border border-brand-orange/20"
-              >
-                Intelligence Dashboard
-              </button>
+            {user ? (
+              <div className="flex items-center gap-4">
+                {user.email === ADMIN_EMAIL && (
+                  <button 
+                    onClick={() => setIsAdminLeadsOpen(true)}
+                    className="text-brand-orange hover:text-white transition-colors bg-brand-orange/10 px-2 py-0.5 rounded border border-brand-orange/20"
+                  >
+                    Intelligence Dashboard
+                  </button>
+                )}
+                <button 
+                  onClick={handleSignOut}
+                  className="text-gray-500 hover:text-red-500 transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
             ) : (
               <button 
-                onDoubleClick={handleAdminLogin}
-                className="opacity-10 hover:opacity-100 transition-opacity cursor-default"
+                onClick={handleAdminLogin}
+                className="opacity-5 hover:opacity-100 transition-opacity cursor-pointer text-[8px] tracking-[0.3em] uppercase"
                 title="System Admin Only"
               >
-                Admin
+                Access Protocol
               </button>
             )}
           </div>
