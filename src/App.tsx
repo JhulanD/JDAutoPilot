@@ -18,10 +18,12 @@ import {
   Moon
 } from "lucide-react";
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './lib/firebase';
+import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { db, auth } from './lib/firebase';
 import { handleFirestoreError, OperationType } from './lib/firestoreUtils';
 import Chatbot from "./components/Chatbot";
 import ROICalculator from "./components/ROICalculator";
+import AdminLeads from "./components/AdminLeads";
 
 const Modal = ({ isOpen, onClose, onSuccess }: { isOpen: boolean, onClose: () => void, onSuccess: () => void }) => {
   const [formData, setFormData] = useState({ name: '', email: '' });
@@ -224,6 +226,27 @@ export default function App() {
   const [newsletterName, setNewsletterName] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [heroVariant, setHeroVariant] = useState<number>(0);
+
+  // Admin intelligence dashboard
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [isAdminLeadsOpen, setIsAdminLeadsOpen] = useState(false);
+  const ADMIN_EMAIL = 'jd.framelab@gmail.com';
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleAdminLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
 
   const HERO_VARIANTS = [
     <>Blueprint For <br/><span className="text-brand-orange tracking-[-0.06em]">Agentic Workflows.</span></>,
@@ -747,10 +770,29 @@ export default function App() {
             <a href="https://x.com/JDAutoPilot" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">Twitter</a>
             <a href="https://www.linkedin.com/in/jhulandey/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">LinkedIn</a>
             <a href="mailto:jhulandey.ai@gmail.com" className="hover:text-brand-orange transition-colors">Contact</a>
+            
+            {/* Admin Intelligence Trigger */}
+            {user?.email === ADMIN_EMAIL ? (
+              <button 
+                onClick={() => setIsAdminLeadsOpen(true)}
+                className="text-brand-orange hover:text-white transition-colors bg-brand-orange/10 px-2 py-0.5 rounded border border-brand-orange/20"
+              >
+                Intelligence Dashboard
+              </button>
+            ) : (
+              <button 
+                onDoubleClick={handleAdminLogin}
+                className="opacity-10 hover:opacity-100 transition-opacity cursor-default"
+                title="System Admin Only"
+              >
+                Admin
+              </button>
+            )}
           </div>
         </div>
       </footer>
       <Chatbot />
+      <AdminLeads isOpen={isAdminLeadsOpen} onClose={() => setIsAdminLeadsOpen(false)} />
     </div>
   );
 }

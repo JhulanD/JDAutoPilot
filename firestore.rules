@@ -22,12 +22,20 @@ service cloud.firestore {
              (!('details' in data) || (data.details is map));
     }
 
+    function isAdmin() { 
+      return isSignedIn() && (request.auth.token.email == 'jd.framelab@gmail.com' && request.auth.token.email_verified == true); 
+    }
+
     match /leads/{leadId} {
       // Allow public creation for leads (newsletter/audit/vault)
       allow create: if isValidId(leadId) && isValidLead(incoming());
       
-      // Prevent unauthorized access from client
-      allow read, update, delete: if false;
+      // Allow admin to read leads
+      allow read: if isAdmin();
+      
+      // Prevent unauthorized updates/deletes even for admin for data integrity, 
+      // or allow admin if needed. Let's allow admin read for now.
+      allow update, delete: if false;
     }
   }
 }
